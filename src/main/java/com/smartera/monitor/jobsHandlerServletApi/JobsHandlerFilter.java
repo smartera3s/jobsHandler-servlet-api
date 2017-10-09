@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONException;
 
-import com.smartera.monitor.jobsHandler.Job;
 import com.smartera.monitor.jobsHandler.JobHandler;
 
 public class JobsHandlerFilter implements Filter {
