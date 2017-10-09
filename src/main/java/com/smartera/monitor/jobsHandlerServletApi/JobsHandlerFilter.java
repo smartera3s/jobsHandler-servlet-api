@@ -1,6 +1,7 @@
 package com.smartera.monitor.jobsHandlerServletApi;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -11,6 +12,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONException;
+
+import com.smartera.monitor.jobsHandler.Job;
 import com.smartera.monitor.jobsHandler.JobHandler;
 
 public class JobsHandlerFilter implements Filter {
@@ -30,7 +34,12 @@ public class JobsHandlerFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         
-        this.reportCurrentJobInRequest(httpRequest);
+        try {
+			this.reportCurrentJobInRequest(httpRequest);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         
         chain.doFilter(request,response);
 
@@ -42,10 +51,11 @@ public class JobsHandlerFilter implements Filter {
 		
 	}
 	
-	private void reportCurrentJobInRequest(HttpServletRequest request){
-//        JobHandler.getInstance().startNewJob().setJobStory(request.getParameter("JOB_STORY"));
-		System.out.println("inside jobs handler servlet api");
+	private void reportCurrentJobInRequest(HttpServletRequest request) throws JSONException{
+		
+        HashMap<String, Object>	requestParameters	=	HttpJobsFactory.paramsFromHttpServletRequest(request);
 
+        JobHandler.getInstance().startNewJob((String) requestParameters.get("request_id") ,(String)requestParameters.get("Job_Story"));
 	}
 	
 
