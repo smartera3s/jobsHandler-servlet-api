@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONException;
 
-import com.smartera.monitor.jobsHandler.Job;
 import com.smartera.monitor.jobsHandler.JobHandler;
 
 public class JobsHandlerFilter implements Filter {
@@ -35,8 +34,8 @@ public class JobsHandlerFilter implements Filter {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         
         try {
-			this.reportCurrentJobInRequest(httpRequest);
-		} catch (JSONException e) {
+        	reportCurrentJobInRequest(httpRequest);
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -51,11 +50,17 @@ public class JobsHandlerFilter implements Filter {
 		
 	}
 	
-	private void reportCurrentJobInRequest(HttpServletRequest request) throws JSONException{
-		
-        HashMap<String, Object>	requestParameters	=	HttpJobsFactory.paramsFromHttpServletRequest(request);
+	private void reportCurrentJobInRequest(HttpServletRequest request) throws Exception{
 
-        JobHandler.getInstance().startNewJob((String) requestParameters.get("request_id") ,(String)requestParameters.get("Job_Story"));
+        String jobID	=	request.getHeader("request-id");
+        System.out.println("current Job ID is: " + jobID);
+        String storyID	=	(request.getHeader("JOB_STORY") != null) ? request.getHeader("JOB_STORY") : "NONE";
+        
+        HashMap<String, Object>	cachedRequestAsHashMap	=	HttpJobsFactory.paramsFromHttpServletRequest(request);
+        
+        JobHandler.getInstance()
+        		  .reportTo("http://monitoringservice:8080/MonitoringService/ReportJobStatus")
+        		  .startNewJob(jobID , storyID, cachedRequestAsHashMap);
 	}
 	
 
