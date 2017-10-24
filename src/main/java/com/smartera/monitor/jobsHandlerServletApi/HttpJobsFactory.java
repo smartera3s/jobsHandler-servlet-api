@@ -42,14 +42,11 @@ public class HttpJobsFactory {
 	}
 	
 	private static HashMap<String, Object>	getRequestHeaders(HttpServletRequest request){
+		
 		HashMap<String, Object>	headers	=	new HashMap<String, Object>();
-		Enumeration<String> headerNames = request.getHeaderNames();
-
-        if (headerNames != null) {
-                while (headerNames.hasMoreElements()) {
-                		headers.put(headerNames.nextElement(), request.getHeader(headerNames.nextElement()));
-                }
-        }
+		headers.put("request_ID", request.getHeader("request-id"));
+		headers.put("JOB_STORY", request.getHeader("JOB_STORY"));
+		
 		return headers;
 	}
 }
